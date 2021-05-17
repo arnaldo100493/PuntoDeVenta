@@ -9,8 +9,10 @@ import java.awt.Component;
 import javax.swing.JPanel;
 
 /**
+ * Clase para limpiar los componentes swing de un panel
  *
- * @author FABAME
+ * @author abarrios
+ * @version 1.0
  */
 public class LimpiarComponentes {
 

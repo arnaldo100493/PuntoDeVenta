@@ -5,8 +5,15 @@
  */
 package com.puntodeventa.vista;
 
+import com.puntodeventa.control.ControlCliente;
+import com.puntodeventa.modelo.Cliente;
+import com.puntodeventa.utilidades.LimpiarComponentes;
+import com.puntodeventa.utilidades.SwingMessages;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.Hashtable;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -14,6 +21,16 @@ import java.awt.Toolkit;
  */
 public class VistaPuntoDeVenta extends javax.swing.JFrame {
 
+    //Objetos
+    private Cliente cliente;
+
+    //Controladores
+    private final ControlCliente controlCliente;
+
+    //Modelos
+    //Modelos Tabla Clientes
+    private String[] columnas = new String[]{"Identificación", "Nombres", "Dirección"};
+    private DefaultTableModel modeloTabla = new DefaultTableModel(this.columnas, 0);
     /**
      * Creates new form Index
      */
@@ -26,15 +43,65 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
         //Image image = new ImageIcon(getClass().getResource("/com/puntodeventa/iconos/icono-escaparate-tienda.jpg")).getImage();
         Image iconoPropio = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puntodeventa/iconos/icono-escaparate-tienda.jpg"));
         this.setIconImage(iconoPropio);
-
+        this.cliente = new Cliente();
+        this.controlCliente = new ControlCliente();
+        this.controlCliente.cargarDatos();
+        this.jTable1.setModel(this.modeloTabla);
+        this.listarClientes();
     }
-
+    
     @Override
     public Image getIconImage() {
         Image retValue = Toolkit.getDefaultToolkit().
                 getImage(ClassLoader.getSystemResource("./com/puntodeventa/iconos/icono-escaparate-tienda.jpg"));
-
+        
         return retValue;
+    }
+    
+    private void limpiarCampos() {
+        LimpiarComponentes.limpiarComponentes(this.jPanel18);
+    }
+    
+    private boolean validarCampos() {
+        boolean validarCampos = true;
+        if (this.txtId.getText().isEmpty() || this.txtNombreCompleto.getText().isEmpty() || this.txtDireccion.getText().isEmpty()) {
+            validarCampos = false;
+        }
+        return validarCampos;
+    }
+    
+    private void gestionarClientes() {
+        this.panelContenedor.setSelectedComponent(this.panelCliente);
+    }
+    
+    private void registrarCliente() {
+        if (this.validarCampos()) {
+            String identificacion = this.txtId.getText();
+            String nombreCompleto = this.txtNombreCompleto.getText();
+            String direccion = this.txtDireccion.getText();
+            //Seteamos.
+            this.cliente.setIdentificacion(identificacion);
+            this.cliente.setNombres(nombreCompleto);
+            this.cliente.setDireccion(direccion);
+            //Guardamos.
+            this.controlCliente.registrar(this.cliente);
+            this.listarClientes();
+            this.limpiarCampos();
+        } else {
+            SwingMessages.mostrarDialogoMensajeAdvertencia("No debe dejar campos vacíos");
+        }
+    }
+    
+    private void listarClientes() {
+        //Lista Clientes en la Tabla.
+        Object[] filas = new Object[]{this.cliente.getIdentificacion(), this.cliente.getNombres(), this.cliente.getDireccion()};
+        this.modeloTabla.addRow(filas);
+        List<Cliente> listadoClientes = this.controlCliente.listar(this.jTable1);
+        
+    }
+    
+    private void actualizarTabla() {
+        this.modeloTabla.setNumRows(0);
     }
 
     /**
@@ -48,7 +115,7 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
-        jButton1 = new javax.swing.JButton();
+        btnGestionarClientes = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -64,14 +131,14 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        lblId = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
+        lblNombreCompleto = new javax.swing.JLabel();
+        txtNombreCompleto = new javax.swing.JTextField();
+        lblDireccion = new javax.swing.JLabel();
+        txtDireccion = new javax.swing.JTextField();
         jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        btnRegistrarCliente = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -161,17 +228,17 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
 
         jToolBar1.setRollover(true);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/puntodeventa/iconos/clientes.png"))); // NOI18N
-        jButton1.setText("    Clientes    ");
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnGestionarClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/puntodeventa/iconos/clientes.png"))); // NOI18N
+        btnGestionarClientes.setText("    Clientes    ");
+        btnGestionarClientes.setFocusable(false);
+        btnGestionarClientes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGestionarClientes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGestionarClientes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnGestionarClientesActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton1);
+        jToolBar1.add(btnGestionarClientes);
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/puntodeventa/iconos/articulos.png"))); // NOI18N
         jButton2.setText("  Productos  ");
@@ -286,15 +353,20 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
-        jLabel3.setText("Id");
+        lblId.setText("Id");
 
-        jLabel4.setText("Nombre Completo");
+        lblNombreCompleto.setText("Nombre Completo");
 
-        jLabel5.setText("Dirección");
+        lblDireccion.setText("Dirección");
 
         jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/puntodeventa/iconos/eliminar mediano.png"))); // NOI18N
 
-        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/puntodeventa/iconos/guardar_mediano.png"))); // NOI18N
+        btnRegistrarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/puntodeventa/iconos/guardar_mediano.png"))); // NOI18N
+        btnRegistrarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarClienteActionPerformed(evt);
+            }
+        });
 
         jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/puntodeventa/iconos/limpiar mediano.png"))); // NOI18N
 
@@ -305,19 +377,19 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField3)
-                    .addComponent(jTextField4)
+                    .addComponent(txtId)
+                    .addComponent(txtNombreCompleto)
+                    .addComponent(txtDireccion)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
+                            .addComponent(lblId)
+                            .addComponent(lblNombreCompleto)
+                            .addComponent(lblDireccion))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(13, 13, 13)
-                .addComponent(jButton11)
+                .addComponent(btnRegistrarCliente)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -328,21 +400,21 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addComponent(lblId)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel4)
+                .addComponent(lblNombreCompleto)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtNombreCompleto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel5)
+                .addComponent(lblDireccion)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton10)
-                    .addComponent(jButton11)
+                    .addComponent(btnRegistrarCliente)
                     .addComponent(jButton12))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1024,10 +1096,10 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-    {//GEN-HEADEREND:event_jButton1ActionPerformed
-        this.panelContenedor.setSelectedComponent(this.panelCliente);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnGestionarClientesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnGestionarClientesActionPerformed
+    {//GEN-HEADEREND:event_btnGestionarClientesActionPerformed
+        this.gestionarClientes();
+    }//GEN-LAST:event_btnGestionarClientesActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
@@ -1048,6 +1120,11 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
     {//GEN-HEADEREND:event_jButton5ActionPerformed
         this.panelContenedor.setSelectedComponent(this.panelCompras);
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void btnRegistrarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarClienteActionPerformed
+        // TODO add your handling code here:
+        this.registrarCliente();
+    }//GEN-LAST:event_btnRegistrarClienteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1087,9 +1164,9 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnGestionarClientes;
+    private javax.swing.JButton btnRegistrarCliente;
     private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton22;
@@ -1122,7 +1199,6 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
@@ -1133,9 +1209,7 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -1172,7 +1246,6 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField17;
     private javax.swing.JTextField jTextField18;
     private javax.swing.JTextField jTextField19;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField20;
     private javax.swing.JTextField jTextField21;
     private javax.swing.JTextField jTextField22;
@@ -1183,17 +1256,21 @@ public class VistaPuntoDeVenta extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField27;
     private javax.swing.JTextField jTextField28;
     private javax.swing.JTextField jTextField29;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField30;
     private javax.swing.JTextField jTextField31;
     private javax.swing.JTextField jTextField32;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel lblDireccion;
+    private javax.swing.JLabel lblId;
+    private javax.swing.JLabel lblNombreCompleto;
     private javax.swing.JPanel panelBuscarVenta;
     private javax.swing.JPanel panelCliente;
     private javax.swing.JPanel panelCompras;
     private javax.swing.JTabbedPane panelContenedor;
     private javax.swing.JPanel panelProducto;
     private javax.swing.JPanel panelVentas;
+    private javax.swing.JTextField txtDireccion;
+    private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtNombreCompleto;
     // End of variables declaration//GEN-END:variables
 }

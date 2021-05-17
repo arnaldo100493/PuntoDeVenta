@@ -1,0 +1,2 @@
+Persona{identificacion=1047459854, nombres=Arnaldo Barrios, apellidoPaterno=, apellidoMaterno=, direccion=Bogota, telefono=, correoElectronico=, sexo=, edad=0, talla=0.0, peso=0.0, fechaRegistro=null}
+Persona{identificacion=12, nombres=12, apellidoPaterno=, apellidoMaterno=, direccion=12, telefono=, correoElectronico=, sexo=, edad=0, talla=0.0, peso=0.0, fechaRegistro=null}

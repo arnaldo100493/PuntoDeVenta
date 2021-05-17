@@ -8,9 +8,11 @@ package com.puntodeventa.utilidades;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
+/** 
+ * Clase para la validación de correos
  *
  * @author abarrios
+ * @version 1.0
  */
 public class ValidarFormatoCorreo {
 
